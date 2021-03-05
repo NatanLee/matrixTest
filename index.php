@@ -161,11 +161,14 @@ class Controller {
 		$this->errors = $res['errors'];
 		if(empty($res['errors'])){
 			$db = DBModel::Instance();
+			$check = $db->sqlQuery("SELECT string FROM `strings`")->fetchAllResult();
+			foreach($check as &$val){
+				$val = $val['string'];
+			}			
 			foreach($res['result'] as $one){				
-				$check = $db->sqlQuery("SELECT * FROM `strings` WHERE string = '".$one."'")->fetchAllResult();				
-				if(!$check){
+				if(!in_array($one, $check)){
 					$db->sqlQuery("INSERT INTO `strings` (`string`) VALUES ('".$one."')");
-				}				
+				}		
 			}
 			header('Location: ./');
 			exit;			
